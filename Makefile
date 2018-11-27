@@ -30,9 +30,6 @@ ecr-login: ## login to ecr
 okta-aws-login: ## run okta-aws-login (in a separate terminal)
 	okta-aws-login --user ${LOGNAME} --region ${REGION} --aws-profile ${AWS_PROFILE} --keep-reloading
 
-spit-log:
-	aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes
-
 find-big-logs:
 	$(foreach item, $(LOGGROUP),aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes ${NEWLINE})
 
