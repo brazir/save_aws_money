@@ -18,7 +18,9 @@ LOGGROUP="$(aws logs describe-log-groups | jq '.logGroups[] | .logGroupName')"
 for item in $LOGGROUP
 do
         DATASUM=$(aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes| jq '.Datapoints[0].Sum')
-        echo "${DATASUM}, $item"
+        # DATASUM is in bytes so convert number to GB and then 4 weeks to a month multiplied by the 50 cents a GB price from aws
+        let "calculated = (DATASUM /1000000000) * 2"
+        echo "${DATASUM}, ${calculated}, ${item}"
         if [[ "${DATASUM}" == "null" ]]
         then
           cleanstring=${item#'"'}
