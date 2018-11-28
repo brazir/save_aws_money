@@ -17,6 +17,13 @@ LOGGROUP="$(aws logs describe-log-groups | jq '.logGroups[] | .logGroupName')"
 
 for item in $LOGGROUP
 do
-        echo "Item: $item"
-        aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes
-done
+        DATASUM=$(aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes| jq '.Datapoints[0].Sum')
+        echo "${DATASUM}, $item"
+        if [[ "${DATASUM}" == "null" ]]
+        then
+          cleanstring=${item#'"'}
+          cleanstring=${cleanstring%'"'}
+          $(aws logs delete-log-group --log-group-name ${cleanstring})
+        fi
+done > tmp_potatoe.txt
+sort --field-separator=',' -k1 --numeric-sort tmp_potatoe.txt
