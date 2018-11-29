@@ -7,6 +7,8 @@ export AWS_PROFILE ?= put_in_a_thing_here_in_your_shell
 
 REGION ?= us-east-1
 
+MUTATE ?= off
+
 #3600 * 24 * 7
 PERIOD=604800
 ENDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -20,12 +22,18 @@ do
         DATASUM=$(aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes| jq '.Datapoints[0].Sum')
         # DATASUM is in bytes so convert number to GB and then 4 weeks to a month multiplied by the 50 cents a GB price from aws
         let "calculated = (DATASUM /1000000000) * 2"
-        echo "${DATASUM}, ${calculated}, ${item}"
+        COMMANDSTR=""
         if [[ "${DATASUM}" == "null" ]]
         then
           cleanstring=${item#'"'}
           cleanstring=${cleanstring%'"'}
-          $(aws logs delete-log-group --log-group-name ${cleanstring})
+          if [[ "${MUTATE}" == "on" ]]
+          then
+            $(aws logs delete-log-group --log-group-name ${cleanstring})
+          else
+            COMMANDSTR=", aws logs delete-log-group --log-group-name ${cleanstring}"
+          fi
         fi
+        echo "${DATASUM}, ${calculated}, ${item}${COMMANDSTR}"
 done > tmp_potatoe.txt
 sort --field-separator=',' -k1 --numeric-sort tmp_potatoe.txt
