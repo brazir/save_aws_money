@@ -13,8 +13,6 @@ MUTATE ?= off
 PERIOD=604800
 ENDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 STARTTIME=$(date -u  -v-7d +"%Y-%m-%dT%H:%M:%SZ")
-#could not figure out how to invoke this in make task probably something stupid with an escape
-#LOGGROUP="$(aws logs describe-log-groups | jq '.logGroups[] | .logGroupName')"
 DUMPIT="$(aws dynamodb list-tables| jq '.TableNames[]')"
 
 for item in $DUMPIT
@@ -36,8 +34,7 @@ do
       cleanstring=${cleanstring%'"'}
       if [[ "${MUTATE}" == "on" ]]
       then
-        echo ""
-        #$(aws logs delete-log-group --log-group-name ${cleanstring})
+        $(aws dynamodb delete-table --table-name ${cleanstring})
       else
         COMMANDSTR=", aws dynamodb delete-table --table-name ${cleanstring}"
       fi
