@@ -19,7 +19,6 @@ DUMPIT="$(aws dynamodb list-tables| jq '.TableNames[]')"
 
 for item in $DUMPIT
 do
-    echo ${item}
     #valuable metrics list
     #https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/monitoring-cloudwatch.html
     #ProvisionedWriteCapacityUnits  --This is how much you indicate dynamo can use
