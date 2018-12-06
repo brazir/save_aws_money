@@ -27,7 +27,6 @@ do
       cleanstring=${cleanstring%'"'}
       if [[ "${MUTATE}" == "on" ]]
       then
-        echo ""
         $(aws kinesis delete-stream --stream-name ${cleanstring})
       else
         COMMANDSTR=", aws kinesis delete-stream --stream-name ${cleanstring}"
