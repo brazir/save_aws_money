@@ -27,6 +27,18 @@ This software is provided as is use at your own risk.
     * The consumed read
     * The dynamo table
     * The suggested delete command if you are in demo mode
+### Kinesis
+* Stream
+  * How to run
+    * Obtain a auth token e.g.`(LOGNAME=USER_NAME_REPLACE_ME AWS_PROFILE=PROFILE_NAME_REPLACE_ME make okta-aws-login)`
+    * run the run script e.g. `(AWS_PROFILE=PROFILE_NAME_REPLACE_ME ./kinesis_stream_run.sh)`
+      * if you want the script to automatically remove the unusued kinesis streams prepend with MUTATE=on
+  * Use
+    * The default run will output an ordered list by combined read and write consumption for a kinesis stream
+    * The consumed write
+    * The consumed read
+    * The kinesis stream
+    * The suggested delete command if you are in demo mode
 
 ## FUTURE  
 * Gemeral
@@ -35,3 +47,5 @@ This software is provided as is use at your own risk.
 * Dynamo
   * Add provisioned resource checks to suggest provision  adjustments
   * Add review of reserved to suggest appropriate reservations 
+* kinesis
+  * calculation that takes into account the shards for each stream to provide estimated cost
