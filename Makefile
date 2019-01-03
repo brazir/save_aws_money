@@ -1,5 +1,10 @@
 .DEFAULT_GOAL = help
 
+define NEWLINE
+
+
+endef
+
 export SHELL = /bin/bash
 export PATH ?= /web/tools/bin:/usr/local/bin:/usr/bin:/bin
 export JAVA_HOME ?= $(shell /usr/libexec/java_home)
@@ -26,7 +31,6 @@ okta-aws-login: ## run okta-aws-login (in a separate terminal)
 	okta-aws-login --user ${LOGNAME} --region ${REGION} --aws-profile ${AWS_PROFILE} --keep-reloading
 
 find-big-logs:
-	#aws logs describe-log-groups | jq '.logGroups[] | .logGroupName' \
-	#|xargs -t -I log_group_name_replace_me \
-	#aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=log_group_name_replace_me --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes 
+	$(foreach item, $(LOGGROUP),aws cloudwatch get-metric-statistics --namespace AWS/Logs --metric-name IncomingBytes --dimensions Name=LogGroupName,Value=${item} --start-time ${STARTTIME} --end-time ${ENDTIME} --period ${PERIOD} --statistics Sum --unit Bytes ${NEWLINE})
+
 .PHONY: dist
