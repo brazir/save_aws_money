@@ -40,6 +40,13 @@ This software is provided as is use at your own risk.
     * The kinesis stream
     * The suggested delete command if you are in demo mode
 
+### S3
+* Buckets
+  * How to run
+    * AWS_PROFILE=PROFILE_NAME_REPLACE_ME ./s3_bucket_sizes.sh
+  * Use
+    * The default run will output a list of your buckets, size in bytes, and cost per month in dollars
+
 ## FUTURE  
 * Gemeral
   * better integration into the makefile
